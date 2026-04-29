@@ -1,2 +1,7 @@
 ~$*.docx
 ~$*.xlsx
+automation/.env
+automation/node_modules/
+automation/playwright-report/
+automation/test-results/
+automation/blob-report/
