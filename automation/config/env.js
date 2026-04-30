@@ -12,7 +12,7 @@ function getApiBaseUrl() {
 
 function getTestCredentials() {
   return {
-    email: process.env.E2E_TEST_EMAIL || "",
+    username: process.env.E2E_TEST_USERNAME || process.env.E2E_TEST_EMAIL || "",
     password: process.env.E2E_TEST_PASSWORD || "",
   };
 }

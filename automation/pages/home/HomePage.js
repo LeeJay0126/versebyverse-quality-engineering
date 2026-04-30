@@ -1,16 +1,14 @@
 const { expect } = require("@playwright/test");
+const { PrimaryNav } = require("../../components/PrimaryNav");
 
 class HomePage {
   constructor(page) {
     this.page = page;
+    this.primaryNav = new PrimaryNav(page);
+
     this.logoLink = page.getByRole("link", { name: /^verse by verse$/i });
-    this.nav = page.getByRole("navigation", { name: "Primary" }).first();
-    this.homeLink = this.nav.getByRole("link", { name: /^home$/i });
-    this.aboutLink = this.nav.getByRole("link", { name: /^about$/i });
-    this.studyLink = this.nav.getByRole("link", { name: /study/i });
-    this.communitiesLink = this.nav.getByRole("link", { name: /communities/i });
-    this.loginLink = this.nav.getByRole("link", { name: /^login$/i });
     this.heroHeading = page.getByRole("heading", { name: /explore the bible/i });
+    this.heroSubheading = page.getByRole("heading", { name: /one verse at a time/i });
     this.getStartedLink = page.getByRole("link", { name: /^get started$/i });
   }
 
@@ -21,8 +19,14 @@ class HomePage {
   async expectLoaded() {
     await expect(this.logoLink).toBeVisible();
     await expect(this.heroHeading).toBeVisible();
+    await expect(this.heroSubheading).toBeVisible();
     await expect(this.getStartedLink).toBeVisible();
   }
+
+  async clickGetStarted() {
+    await this.getStartedLink.click();
+  }
+
 }
 
 module.exports = { HomePage };

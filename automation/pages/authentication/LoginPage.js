@@ -21,8 +21,8 @@ class LoginPage {
     await expect(this.passwordInput).toBeVisible();
   }
 
-  async login(identifier, password) {
-    await this.identifierInput.fill(identifier);
+  async login(username, password) {
+    await this.identifierInput.fill(username);
     await this.passwordInput.fill(password);
     await this.submitButton.click();
   }

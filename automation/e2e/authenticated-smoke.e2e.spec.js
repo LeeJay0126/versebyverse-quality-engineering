@@ -4,13 +4,13 @@ const { LoginPage } = require("../pages/authentication/LoginPage");
 
 test.describe("Authenticated smoke", () => {
   test("verified user can sign in and reach a protected page", async ({ page }) => {
-    const { email, password } = getTestCredentials();
+    const { username, password } = getTestCredentials();
 
-    test.skip(!email || !password, "Set E2E_TEST_EMAIL and E2E_TEST_PASSWORD in .env to run this test.");
+    test.skip(!username || !password, "Set E2E_TEST_USERNAME and E2E_TEST_PASSWORD in .env to run this test.");
 
     const loginPage = new LoginPage(page);
     await loginPage.goto();
-    await loginPage.login(email, password);
+    await loginPage.login(username, password);
 
     await expect(page).toHaveURL(/\/$/);
 

@@ -37,7 +37,7 @@ API_BASE_URL=http://localhost:4000
 For authenticated tests, add a verified test account:
 
 ```text
-E2E_TEST_EMAIL=your-test-user@example.com
+E2E_TEST_USERNAME=your-test-username
 E2E_TEST_PASSWORD=your-test-password
 ```
 
@@ -106,7 +106,7 @@ Example:
 const loginPage = new LoginPage(page);
 
 await loginPage.goto();
-await loginPage.login("user@example.com", "Password123!");
+await loginPage.login("testusername", "Password123!");
 await loginPage.expectLoginError();
 ```
 

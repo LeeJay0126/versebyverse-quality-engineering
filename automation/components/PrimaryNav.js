@@ -4,13 +4,12 @@ class PrimaryNav {
   constructor(page) {
     this.page = page;
     this.nav = page.getByRole("navigation", { name: "Primary" }).first();
-    this.homeLink = this.nav.getByRole("link", { name: "HOME" });
-    this.aboutLink = this.nav.getByRole("link", { name: "ABOUT" });
+    this.homeLink = this.nav.getByRole("link", { name: /^home$/i });
+    this.aboutLink = this.nav.getByRole("link", { name: /^about$/i });
     this.studyLink = this.nav.getByRole("link", { name: /study/i });
     this.communitiesLink = this.nav.getByRole("link", { name: /communities/i });
-    this.loginLink = this.nav.getByRole("link", { name: "LOGIN" });
+    this.loginLink = this.nav.getByRole("link", { name: /^login$/i });
 
-    // The app's user menu icon currently has no accessible name, so keep this CSS selector isolated here.
     this.userMenuButton = page.locator(".UserMenuButton").first();
     this.notificationsButton = page.getByRole("button", { name: /notifications/i });
     this.profileButton = page.getByRole("button", { name: /^profile$/i });
@@ -28,6 +27,21 @@ class PrimaryNav {
   async expectLoggedOutState() {
     await this.expectPublicLinksVisible();
     await expect(this.loginLink).toBeVisible();
+    await expect(this.userMenuButton).toBeHidden();
+  }
+
+  async expectLoggedInState() {
+    await this.expectPublicLinksVisible();
+    await expect(this.loginLink).toBeHidden();
+    await expect(this.userMenuButton).toBeVisible();
+  }
+
+  async goToHome() {
+    await this.homeLink.click();
+  }
+
+  async goToAbout() {
+    await this.aboutLink.click();
   }
 
   async goToLogin() {
@@ -36,6 +50,25 @@ class PrimaryNav {
 
   async goToStudy() {
     await this.studyLink.click();
+  }
+
+  async goToCommunities() {
+    await this.communitiesLink.click();
+  }
+
+  async goToNotifications() {
+    await this.openUserMenu();
+    await this.notificationsButton.click();
+  }
+
+  async goToProfile() {
+    await this.openUserMenu();
+    await this.profileButton.click();
+  }
+
+  async goToMyNotes() {
+    await this.openUserMenu();
+    await this.myNotesButton.click();
   }
 
   async openUserMenu() {
