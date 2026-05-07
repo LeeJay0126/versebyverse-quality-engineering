@@ -1,13 +1,15 @@
 # VerseByVerse Playwright Automation
 
-This folder contains the starter Playwright automation framework for VerseByVerse QA coverage.
+This folder contains executable Playwright automation for the VerseByVerse QA portfolio. It includes API tests, browser E2E smoke tests, reusable authentication/session helpers, test data cleanup, and HTML/JSON/JUnit reporting.
 
-The first version is intentionally small:
+## Current Coverage
 
-- API checks for health, auth/session behavior, and negative validation
-- E2E checks for login page loading and protected-route redirects
-- A basic page object for the login screen
-- Environment-based configuration for local or deployed test targets
+- API preflight checks for backend health and configured test-user login
+- Authentication/session API checks, including unauthenticated access and invalid login handling
+- Notes API checks for create, read, update, delete, search, filtering, and negative paths
+- Community API checks for discovery, authentication guards, create/list/detail workflows, and cleanup
+- Community post API checks for create/list/detail workflows and required-field validation
+- Browser E2E smoke checks for login, signup, protected routes, authenticated navigation, and core page loading
 
 ## 1. Install Dependencies
 
@@ -19,7 +21,9 @@ npm install
 npx playwright install chromium
 ```
 
-## 2. Configure Local Environment
+`npm install` installs the Playwright test runner and dotenv. `npx playwright install chromium` is only needed for browser E2E tests.
+
+## 2. Configure Environment
 
 Copy the example environment file:
 
@@ -27,23 +31,20 @@ Copy the example environment file:
 Copy-Item .env.example .env
 ```
 
-Update `.env` if your app runs on different ports:
+Update `.env` for your target environment:
 
 ```text
 WEB_BASE_URL=http://localhost:3000
 API_BASE_URL=http://localhost:4000
-```
-
-For authenticated tests, add a verified test account:
-
-```text
-E2E_TEST_USERNAME=your-test-username
+E2E_TEST_USERNAME=your-verified-test-user
 E2E_TEST_PASSWORD=your-test-password
 ```
 
+The authenticated API tests are skipped when `E2E_TEST_USERNAME` or `E2E_TEST_PASSWORD` is missing. Public API checks and unauthenticated negative tests still run without credentials.
+
 ## 3. Start The App Under Test
 
-Before running E2E tests, start the VerseByVerse frontend and backend in their own terminals.
+Before running tests against local defaults, start the VerseByVerse frontend and backend in their own terminals.
 
 Expected local defaults:
 
@@ -52,30 +53,44 @@ Frontend: http://localhost:3000
 Backend:  http://localhost:4000
 ```
 
-## 4. Run Tests
+For deployed targets, set `WEB_BASE_URL` and `API_BASE_URL` to the deployed frontend and backend URLs.
 
-Run everything:
+## 4. Recommended Run Order
+
+Run the preflight first. This confirms the backend is reachable and verifies the configured test user when credentials are present.
 
 ```powershell
-npm test
+npm run test:preflight
 ```
 
-Run only API tests:
+Run only notes API coverage:
+
+```powershell
+npm run test:notes
+```
+
+Run only community API coverage:
+
+```powershell
+npm run test:community
+```
+
+Run the full API suite:
 
 ```powershell
 npm run test:api
 ```
 
-Run only browser E2E tests:
+Run browser E2E tests after the frontend is available:
 
 ```powershell
 npm run test:e2e
 ```
 
-Run browser tests in headed mode:
+Run everything:
 
 ```powershell
-npm run test:headed
+npm test
 ```
 
 Open the latest HTML report:
@@ -84,21 +99,38 @@ Open the latest HTML report:
 npm run report
 ```
 
-## Current Structure
+## Reports
+
+Playwright writes report artifacts to ignored local folders:
+
+```text
+playwright-report/          HTML report
+test-results/results.json   JSON report
+test-results/results.xml    JUnit report
+test-results/               traces, screenshots, and videos on failure
+```
+
+These reports are intentionally ignored by git so the repository stays clean while local and CI runs can still generate evidence.
+
+## Structure
 
 ```text
 automation/
   api-tests/       API-level Playwright tests
   components/      reusable UI components such as navigation
-  e2e/             browser-based end-to-end tests
   config/          environment helpers
+  e2e/             browser-based end-to-end tests
   pages/           page objects
   support/         reusable API/test helpers
 ```
 
+## Test Data Cleanup
+
+Authenticated API tests create temporary notes, communities, and posts with unique timestamps. Tests store created record ids and attempt cleanup in `finally` blocks so failed assertions do not leave avoidable test data behind.
+
 ## Page Object Pattern
 
-Tests should describe behavior. Page objects and component objects should own selectors.
+Browser tests keep selectors in page/component objects where practical. Tests should describe behavior; page objects and component objects should own selectors and repeated UI actions.
 
 Example:
 
@@ -109,27 +141,3 @@ await loginPage.goto();
 await loginPage.login("testusername", "Password123!");
 await loginPage.expectLoginError();
 ```
-
-Use `pages/` for full screens, such as `LoginPage` and `SignupPage`.
-Use `components/` for shared UI pieces, such as `PrimaryNav`.
-
-## MVP Coverage
-
-The starter suite maps to high-value QA cases:
-
-- API health check
-- unauthenticated `/auth/me` rejection
-- invalid login rejection
-- login page smoke check
-- protected route redirect checks
-- optional verified-user login smoke test
-
-## Next Automation Targets
-
-After this setup is running, the next best additions are:
-
-- notes API create/list/update/delete tests
-- successful login setup through API or UI
-- community creation and membership checks
-- notification invite/read/action workflows
-- smoke regression suite for portfolio demos

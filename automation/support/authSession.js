@@ -12,22 +12,22 @@ async function createAuthenticatedRequestContext() {
     baseURL: getApiBaseUrl(),
   });
 
-  const loginResponse = await apiContext.post("/auth/login", {
-    data: {
-      identifier: username,
-      password,
-    },
-  });
-
-  let body = {};
+  let loginResponse;
   try {
-    body = await loginResponse.json();
+    loginResponse = await apiContext.post("/auth/login", {
+      data: {
+        identifier: username,
+        password,
+      },
+    });
+
+    const body = await loginResponse.json();
     expect(loginResponse.status()).toBe(200);
     expect(body.ok).toBe(true);
     expect(body.user).toBeTruthy();
   } catch (error) {
     await apiContext.dispose();
-    throw error;
+    throw new Error(`Unable to log in test user at ${getApiBaseUrl()}/auth/login. ${error.message}`);
   }
 
   return apiContext;

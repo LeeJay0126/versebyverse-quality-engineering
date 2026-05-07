@@ -6,6 +6,10 @@
   "scripts": {
     "test": "playwright test",
     "test:api": "playwright test --project=api",
+    "test:api:report": "playwright test --project=api",
+    "test:preflight": "playwright test api-tests/00-preflight.api.spec.js --project=api",
+    "test:notes": "playwright test api-tests/notes.api.spec.js --project=api",
+    "test:community": "playwright test api-tests/community.api.spec.js api-tests/community-posts.api.spec.js --project=api",
     "test:e2e": "playwright test --project=chromium",
     "test:headed": "playwright test --project=chromium --headed",
     "test:debug": "playwright test --debug",
