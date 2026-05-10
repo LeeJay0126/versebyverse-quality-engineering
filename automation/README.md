@@ -112,6 +112,32 @@ test-results/               traces, screenshots, and videos on failure
 
 These reports are intentionally ignored by git so the repository stays clean while local and CI runs can still generate evidence.
 
+## CI/CD
+
+GitHub Actions workflow:
+
+```text
+.github/workflows/api-automation.yml
+```
+
+The workflow installs automation dependencies, runs API preflight checks, runs the API automation suite, and uploads Playwright report artifacts.
+
+Configure these repository secrets or variables in GitHub before expecting the workflow to pass:
+
+```text
+API_BASE_URL          required for CI unless the backend is reachable at http://localhost:4000
+WEB_BASE_URL          optional for API-only runs, required later for browser E2E CI
+E2E_TEST_USERNAME     optional, but required for authenticated API tests
+E2E_TEST_PASSWORD     optional, but required for authenticated API tests
+```
+
+Uploaded artifacts:
+
+```text
+playwright-html-report
+playwright-api-results
+```
+
 ## Structure
 
 ```text
